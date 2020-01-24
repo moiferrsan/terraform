@@ -6,6 +6,19 @@ resource "aws_instance" "nginx" {
   security_groups = ["${aws_security_group.allow_ssh.id}"]
   key_name = "${aws_key_pair.web.key_name}"
   subnet_id = "${aws_subnet.public.0.id}"
+  
+  provisioner "remote-exec" {
+    inline = ["sudo apt-get install nginx -y"]
+
+    connection {
+    type = "ssh"
+    user = "admin"
+    private_key = "${file("~/.ssh/id_rsa")}"
+    host = "${aws_instance.nginx.public_ip}"
+  }
+
+  }
+  
   tags = {
     Name      = "Linux - App nginx"
     Stack     = "Production"
@@ -26,6 +39,20 @@ resource "aws_instance" "apache" {
   security_groups = ["${aws_security_group.allow_ssh.id}"]
   key_name = "${aws_key_pair.web.key_name}"
   subnet_id = "${aws_subnet.public.1.id}"
+  
+  provisioner "remote-exec" {
+    inline = ["sudo apt-get install apache2 -y"]
+
+    connection {
+    type = "ssh"
+    user = "admin"
+    private_key = "${file("~/.ssh/id_rsa")}"
+    host = "${aws_instance.apache.public_ip}"
+  }
+
+  }
+
+
   tags = {
     Name      = "Linux - App Apache"
     Stack     = "Production"
