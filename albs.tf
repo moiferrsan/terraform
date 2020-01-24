@@ -2,7 +2,10 @@ resource "aws_lb" "web" {
   name               = "web-app"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = ["${aws_security_group.allow_http.id}"]
+  security_groups    = [
+                       "${aws_security_group.allow_http.id}",
+                       "${aws_vpc.web.default_security_group_id}"
+                       ]
   subnets            = "${aws_subnet.public.*.id}"
 
   enable_deletion_protection = true
