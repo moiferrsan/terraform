@@ -1,6 +1,7 @@
-resource "aws_route_table" "private" {
+// Criação de rotas para internet que serão utilizadas pelos nat gateways das subnets privadas
+resource "aws_route_table" "rt-private" {
   count  = var.az_count
-  vpc_id = aws_vpc.web.id
+  vpc_id = aws_vpc.corp.id
 
   route {
     cidr_block     = "0.0.0.0/0"
@@ -11,9 +12,9 @@ resource "aws_route_table" "private" {
     Environment = "webapp"
   }
 }
-
+// associação das rotas privadas às subnets privadas
 resource "aws_route_table_association" "private" {
   count          = var.az_count
   subnet_id      = element(aws_subnet.private.*.id, count.index)
-  route_table_id = element(aws_route_table.private.*.id, count.index)
+  route_table_id = element(aws_route_table.rt-private.*.id, count.index)
 }
